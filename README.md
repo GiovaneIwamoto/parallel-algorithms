@@ -2,18 +2,24 @@
 
 ### **OVERVIEW**
 
-Este trabalho pode ser feito em grupo de até duas pessoas.
+Implementar os algoritmos paralelos **ODD-EVEN** e **SAMPLESORT** usando MPI e C/C++.
 
-Implementar os algoritmos paralelos par-impar, samplesort usando MPI e C/C++. Na implementação do Samplesort o grupo deve produzir duas alterações na solução vista em sala. Entre estas alterações você pode trocar o qsort() pelo Introsort, fazer a busca binária para encontrar elementos entre os separadores globais, alterar algum padrão de comunicação, etc. Além disso, o grupo deve implementar uma das duas soluções: o Bitonicsort ou o quicksort paralelo visto em sala.
+Na implementação do **SAMPLESORT** o grupo deve produzir duas alterações na solução vista em sala. Entre estas alterações você pode trocar o **qsort()** pelo **INTROSORT**, fazer a busca binária para encontrar elementos entre os separadores globais, alterar algum padrão de comunicação, etc.
 
-É necessário fazer testes experimentais em vários processasores e analisar o desempenho dos algoritmos em relação a solução sequencial (Introsort ou qsort()). Teste seus algoritmos para entradas aleatórias de tamanho 10⁷, 10⁸ e 10⁹. Um relatorio em pdf contento a descrição dos algoritmos implementados, as tabelas dos experimentos bem como uma análise dos resultados devem ser entregues juntamente com os códigos fontes.
+Além disso, o grupo deve implementar uma das duas soluções: o **BITONICSORT** ou o **QUICKSORT PARALELO** visto em sala.
 
-A entrega é até o dia 23/set.
+É necessário fazer testes experimentais em vários processasores e analisar o desempenho dos algoritmos em relação a solução sequencial (Introsort ou qsort()). Teste seus algoritmos para entradas aleatórias de tamanho 10⁷, 10⁸ e 10⁹. Um relatório em PDF contento a descrição dos algoritmos implementados, as tabelas dos experimentos bem como uma análise dos resultados devem ser entregues juntamente com os códigos fontes.
+
+Entrega 23/09.
 
 ### **EXECUTION**
 
-mpicc oddEvenMPI.c -o oddEvenMPI.e
-mpirun -n 5 ./oddEvenMPI.e
+`LINUX WSL GIOVANE`
+mpicc -o exec_name source.c
+mpiexec -n nproccess ./exec_name
+
+`LINUX WSL PAULO`
+mpirun -n nproccess ./exec_name.e
 
 #### **AUTHOR**
 
