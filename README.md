@@ -12,6 +12,9 @@ A entrega é até o dia 23/set.
 
 ### **EXECUTION**
 
+mpicc oddEvenMPI.c -o oddEvenMPI.e
+mpirun -n 5 ./oddEvenMPI.e
+
 #### **AUTHOR**
 
 - Giovane Hashinokuti Iwamoto - Computer Science student at UFMS - Brazil - MS
