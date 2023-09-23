@@ -17,6 +17,7 @@ Entrega 23/09.
 `LINUX WSL GIOVANE`
 mpicc -o exec_name source.c
 mpiexec -n nproccess ./exec_name
+mpiexec --oversubscribe -n 5 oddeven g 10
 
 `LINUX WSL PAULO`
 mpirun -n nproccess ./exec_name.e
