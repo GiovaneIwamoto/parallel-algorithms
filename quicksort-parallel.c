@@ -76,6 +76,9 @@ int main(int argc, char **argv) {
             vet[i] = rand() % 1000; // Valores aleatórios entre 0 e 999
         }
 
+        printf("\n-------------- Vetor Original --------------\n");
+        imprimeVetor(vet, tam);
+
         // Inicializa tempo de execução
         ti = MPI_Wtime();
         quicksortMPI(vet, 0, tam, rank, np, 0);
