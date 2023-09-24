@@ -54,7 +54,6 @@ int Compare(const void *a_p, const void *b_p)
 void Merge_low(int local_A[], int temp_B[], int temp_C[], int local_n)
 {
     int ai, bi, ci;
-
     ai = 0;
     bi = 0;
     ci = 0;
@@ -79,7 +78,6 @@ void Merge_low(int local_A[], int temp_B[], int temp_C[], int local_n)
 void Merge_high(int local_A[], int temp_B[], int temp_C[], int local_n)
 {
     int ai, bi, ci;
-
     ai = local_n - 1;
     bi = local_n - 1;
     ci = local_n - 1;
@@ -112,8 +110,7 @@ void Odd_even_iter(int local_A[], int temp_B[], int temp_C[],
         if (even_partner >= 0) // Even partner checking
         {
             MPI_Sendrecv(local_A, local_n, MPI_INT, even_partner, 0,
-                         temp_B, local_n, MPI_INT, even_partner, 0, comm,
-                         &status);
+                         temp_B, local_n, MPI_INT, even_partner, 0, comm, &status);
 
             if (my_rank % 2 != 0)
                 Merge_high(local_A, temp_B, temp_C, local_n);
@@ -127,8 +124,7 @@ void Odd_even_iter(int local_A[], int temp_B[], int temp_C[],
         if (odd_partner >= 0) // Odd partner checking
         {
             MPI_Sendrecv(local_A, local_n, MPI_INT, odd_partner, 0,
-                         temp_B, local_n, MPI_INT, odd_partner, 0, comm,
-                         &status);
+                         temp_B, local_n, MPI_INT, odd_partner, 0, comm, &status);
             if (my_rank % 2 != 0)
                 Merge_low(local_A, temp_B, temp_C, local_n);
             else
@@ -177,7 +173,7 @@ void Sort(int local_A[], int local_n, int my_rank,
 void Print_list(int local_A[], int local_n, int rank)
 {
     int i;
-    printf("%d: ", rank);
+    printf("Process %d: ", rank);
     for (i = 0; i < local_n; i++)
         printf("%d ", local_A[i]);
     printf("\n");
@@ -192,14 +188,19 @@ void Print_local_lists(int local_A[], int local_n, int my_rank, int p, MPI_Comm 
 
     if (my_rank == 0)
     {
+        printf("\nLocal list:\n");
+        printf("\n");
+
         A = (int *)malloc(local_n * sizeof(int));
         Print_list(local_A, local_n, my_rank);
+
         for (q = 1; q < p; q++)
         {
             MPI_Recv(A, local_n, MPI_INT, q, 0, comm, &status);
             Print_list(A, local_n, q);
         }
         free(A);
+        printf("\n");
     }
     else
     {
@@ -220,6 +221,7 @@ void Print_global_list(int local_A[], int local_n, int my_rank, int p, MPI_Comm 
         MPI_Gather(local_A, local_n, MPI_INT, A, local_n, MPI_INT, 0, comm);
 
         printf("Global list:\n");
+        printf("\n");
 
         for (i = 0; i < n; i++)
             printf("%d ", A[i]);
@@ -277,7 +279,7 @@ int main(int argc, char *argv[])
     finish = MPI_Wtime();
 
     if (my_rank == 0)
-        printf("\nTime : %e sec\n", finish - start);
+        printf("Sorting time: %e sec\n", finish - start);
 
     Print_local_lists(local_A, local_n, my_rank, p, comm);
     fflush(stdout);
