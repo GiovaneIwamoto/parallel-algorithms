@@ -21,6 +21,10 @@ mpiexec --oversubscribe -n 5 odd-even 10
 `LINUX WSL PAULO`
 mpirun -n nproccess ./exec_name.e
 
+### **EXECUTION QUICKSORT PARALLEL**
+mpicc quicksort-parallel.c -o quick
+mpirun -n nproccess ./quick
+
 #### **AUTHOR**
 
 - Giovane Hashinokuti Iwamoto - Computer Science student at UFMS - Brazil - MS
