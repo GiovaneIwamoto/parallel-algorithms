@@ -271,7 +271,11 @@ int main(int argc, char *argv[])
 
     // Random numbers
     Generate_list(local_A, local_n, my_rank);
+
+    /*
+    Local List Printing:
     Print_local_lists(local_A, local_n, my_rank, p, comm);
+    */
 
     // Sort and time
     start = MPI_Wtime();
@@ -281,10 +285,17 @@ int main(int argc, char *argv[])
     if (my_rank == 0)
         printf("Sorting time: %e sec\n", finish - start);
 
+    /*
+    Local List Printing:
     Print_local_lists(local_A, local_n, my_rank, p, comm);
+    */
+
     fflush(stdout);
 
+    /*
+    Global List Printing:
     Print_global_list(local_A, local_n, my_rank, p, comm);
+    */
 
     free(local_A);
     MPI_Finalize();
