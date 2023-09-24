@@ -1,120 +1,173 @@
+#include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
-#include <mpi.h>
 
-void imprimeVetor(int *vet, int tam) {
+const int RMAX = 100;
+
+void Get_args(int argc, char *argv[], int *global_psize, int *local_psize, int my_rank, int p, MPI_Comm comm)
+{
+    if (argc != 2)
+    {
+        MPI_Finalize();
+        exit(-1);
+    }
+
+    *global_psize = strtol(argv[1], NULL, 10);
+
+    if (*global_psize <= 0 || *global_psize % p != 0)
+    {
+        MPI_Finalize();
+        exit(-1);
+    }
+
+    *local_psize = *global_psize / p; // Divide
+}
+
+void Print_list(int *vet, int size)
+{
     int i;
-    for (i = 0; i < tam; ++i)
+    for (i = 0; i < size; ++i)
         printf("%d ", vet[i]);
     printf("\n\n");
 }
 
-void troca(int *vet, int i, int j) {
+void Swap(int *vet, int i, int j)
+{
     int temp = vet[i];
     vet[i] = vet[j];
     vet[j] = temp;
 }
 
-int particiona(int *vet, int inicio, int fim) {
-    int i = inicio, pivo = vet[inicio], temp;
-    for (int j = inicio + 1; j < fim; j++) {
-        if (vet[j] <= pivo) {
+int Partition(int *vet, int start, int end)
+{
+    int i = start, pivot = vet[start];
+    for (int j = start + 1; j < end; j++)
+    {
+        if (vet[j] <= pivot)
+        {
             i++;
-            troca(vet, i, j);
+            Swap(vet, i, j);
         }
     }
-    troca(vet, inicio, i);
+    Swap(vet, start, i);
     return i;
 }
 
-void quicksort(int *vet, int inicio, int fim) {
-    if (inicio < fim) {
-        int pivo = particiona(vet, inicio, fim);
-        quicksort(vet, inicio, pivo);
-        quicksort(vet, pivo + 1, fim);
+void Quicksort(int *vet, int start, int end)
+{
+    if (start < end)
+    {
+        int pivot = Partition(vet, start, end);
+        Quicksort(vet, start, pivot);
+        Quicksort(vet, start + 1, end);
     }
 }
 
-void quicksortMPI(int *vet, int inicio, int fim, int rank, int np, int rank_index) {
+void Quicksort_MPI(int *vet, int start, int end, int rank, int np, int rank_index)
+{
     int dest = rank + (1 << rank_index);
 
-    if (dest >= np) {
-        quicksort(vet, inicio, fim);
-    } else if (inicio < fim) {
-        int pivo = particiona(vet, inicio, fim);
-        if (pivo - inicio > fim - pivo - 1) {
-            MPI_Send(&vet[pivo + 1], fim - pivo - 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
-            quicksortMPI(vet, inicio, pivo, rank, np, rank_index + 1);
-            MPI_Recv(&vet[pivo + 1], fim - pivo - 1, MPI_INT, dest, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        } else {
-            MPI_Send(&vet[inicio], pivo - inicio, MPI_INT, dest, 1, MPI_COMM_WORLD);
-            quicksortMPI(vet, pivo + 1, fim, rank, np, rank_index + 1);
-            MPI_Recv(&vet[inicio], pivo - inicio, MPI_INT, dest, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    if (dest >= np)
+    {
+        Quicksort(vet, start, end);
+    }
+    else if (start < end)
+    {
+        int pivot = Partition(vet, start, end);
+
+        if (pivot - start > end - pivot - 1)
+        {
+            MPI_Send(&vet[pivot + 1], end - pivot - 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
+            Quicksort_MPI(vet, start, pivot, rank, np, rank_index + 1);
+            MPI_Recv(&vet[pivot + 1], end - pivot - 1, MPI_INT, dest, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+
+        else
+        {
+            MPI_Send(&vet[start], pivot - start, MPI_INT, dest, 1, MPI_COMM_WORLD);
+            Quicksort_MPI(vet, pivot + 1, end, rank, np, rank_index + 1);
+            MPI_Recv(&vet[start], pivot - start, MPI_INT, dest, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
     }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     int np, rank;
-    int *vet, tam;
+    int *vet, size;
+
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &np);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
     MPI_Status msg;
 
-    double ti, ti_2, tf, tf_2;
+    double start_time, finish_time;
+    int global_psize, local_psize;
 
-    // Rank 0 -> Mestre
-    if (rank == 0) {
-        // Gere um vetor aleatório
-        printf("Tamanho do vetor: ");
-        scanf("%d", &tam);
-        vet = (int *)malloc(sizeof(int) * tam);
+    Get_args(argc, argv, &global_psize, &local_psize, rank, np, MPI_COMM_WORLD);
+    size = global_psize;
+
+    if (rank == 0)
+    {
+        vet = (int *)malloc(sizeof(int) * size);
         srand(time(NULL));
-        for (int i = 0; i < tam; i++) {
-            vet[i] = rand() % 1000; // Valores aleatórios entre 0 e 999
+
+        for (int i = 0; i < size; i++)
+        {
+            vet[i] = rand() % RMAX;
         }
 
-        printf("\n-------------- Vetor Original --------------\n");
-        imprimeVetor(vet, tam);
+        /*
+        Printing original list
+        Print_list(vet, size);
+        */
 
-        // Inicializa tempo de execução
-        ti = MPI_Wtime();
-        quicksortMPI(vet, 0, tam, rank, np, 0);
+        // Start time
+        start_time = MPI_Wtime();
+        Quicksort_MPI(vet, 0, size, rank, np, 0);
 
-        // Finaliza tempo de execução
-        tf = MPI_Wtime();
+        // Finish time
+        finish_time = MPI_Wtime();
 
-        printf("\n-------------- Vetor Ordenado --------------\n");
-        imprimeVetor(vet, tam);
-        printf("Tamanho: %d\n", tam);
-        printf("Tempo de Execução: %.4f seconds\n", tf - ti);
+        /*
+        Printing ordered list
+        Print_list(vet, size);
+        */
+
+        printf("Size: %d\n", size);
+        printf("Sorting time: %e sec\n", finish_time - start_time);
 
         int i, end = -1;
         for (i = 0; i < np; i++)
             MPI_Send(&end, 1, MPI_INT, i, 2, MPI_COMM_WORLD);
 
         free(vet);
-    } else {
-        int tamanho, origem, index_count = 0;
+    }
+    else
+    {
+        int sz, source, index_count = 0;
         while (1 << index_count <= rank)
             index_count++;
 
         MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &msg);
 
-        if (msg.MPI_TAG == 2) {
+        if (msg.MPI_TAG == 2)
+        {
             MPI_Finalize();
             return 0;
         }
 
-        MPI_Get_count(&msg, MPI_INT, &tamanho);
+        MPI_Get_count(&msg, MPI_INT, &sz);
 
-        origem = msg.MPI_SOURCE;
-        vet = (int *)malloc(sizeof(int) * tamanho);
-        MPI_Recv(vet, tamanho, MPI_INT, origem, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        quicksortMPI(vet, 0, tamanho, rank, np, index_count);
-        MPI_Send(vet, tamanho, MPI_INT, origem, 1, MPI_COMM_WORLD);
+        source = msg.MPI_SOURCE;
+        vet = (int *)malloc(sizeof(int) * sz);
+
+        MPI_Recv(vet, sz, MPI_INT, source, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        Quicksort_MPI(vet, 0, sz, rank, np, index_count);
+        MPI_Send(vet, sz, MPI_INT, source, 1, MPI_COMM_WORLD);
         free(vet);
     }
 
