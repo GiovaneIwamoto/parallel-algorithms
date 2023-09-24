@@ -1,10 +1,15 @@
 CC = mpicc
 CFLAGS = -g -Wall
-TARGET = odd-even
-SRC = odd-even.c
+TARGETS = odd-even quicksort-parallel
+SOURCES = odd-even.c quicksort-parallel.c
 
-$(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
+all: $(TARGETS)
+
+odd-even: odd-even.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+quicksort-parallel: quicksort-parallel.c
+	$(CC) $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGETS)
