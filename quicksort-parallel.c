@@ -1,3 +1,7 @@
+/*
+    USAGE: mpiexec --oversubscribe -n <p> quicksort-parallel <n>
+*/
+
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
