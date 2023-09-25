@@ -1,3 +1,7 @@
+/*
+USAGE: mpiexec --oversubscribe -n <p> samplesort <n>
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -133,7 +137,9 @@ int main(int argc, char *argv[])
         elmnts[i] = random() % (10 * n + 1);
 
     MPI_Barrier(MPI_COMM_WORLD);
+
     stime = MPI_Wtime();
+
     vsorted = SampleSort(n, elmnts, &nsorted, MPI_COMM_WORLD);
 
     etime = MPI_Wtime();
@@ -144,7 +150,12 @@ int main(int argc, char *argv[])
       printf("%d %d ", myrank, elmnts[i]);
       printf("\n"); */
 
-    printf("tempo = %f\n", etime - stime);
+    // printf("time = %f\n", etime - stime);
+
+    if (myrank == 0)
+    {
+        printf("Sorting time: %e sec\n", etime - stime);
+    }
 
     free(elmnts);
     free(vsorted);
