@@ -26,7 +26,7 @@ mpirun -n nproccess ./exec_name.e
 mpicc quicksort-parallel.c -o quick
 mpirun -n nproccess ./quick
 
-#### **AUTHOR**
+#### **AUTHORS**
 
 - Giovane Hashinokuti Iwamoto - Computer Science student at UFMS - Brazil - MS
 - Paulo Gustavo Hemmel Garcia - Computer Science student at UFMS - Brazil - MS

@@ -1,5 +1,5 @@
 /*
-USAGE: mpiexec --oversubscribe -n <p> samplesort <n>
+USAGE: mpiexec --oversubscribe -n <p> samplesort-quicksort <n>
 */
 
 #include <stdio.h>
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
     int *vsorted; /* array that stores the final sorted elements */
     int nsorted;  /* number de elements in vsorted */
     int i;
-    MPI_Status status;
+    // MPI_Status status;
     double stime, etime;
 
     MPI_Init(&argc, &argv);
@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
 
     if (myrank == 0)
     {
+        printf("SAMPLESORT WITH QUICKSORT\n");
         printf("Sorting time: %e sec\n", etime - stime);
     }
 
