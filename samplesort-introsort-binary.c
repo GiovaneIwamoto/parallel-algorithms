@@ -1,5 +1,5 @@
 /*
-USAGE: mpiexec --oversubscribe -n <p> samplesort-introsort <n>
+USAGE: mpiexec --oversubscribe -n <p> samplesort-introsort-binary <n>
 */
 
 #include <stdio.h>
@@ -7,6 +7,32 @@ USAGE: mpiexec --oversubscribe -n <p> samplesort-introsort <n>
 #include <limits.h>
 #include <mpi.h> /* Include MPI's header file */
 #include <math.h>
+
+int BinarySearch(int separators[], int n, int element)
+{
+    int left = 0;
+    int right = n - 1;
+
+    while (left <= right)
+    {
+        int middle = left + (right - left) / 2;
+
+        if (separators[middle] == element)
+        {
+            return middle; /* Mid interval */
+        }
+        else if (separators[middle] < element)
+        {
+            left = middle + 1; /* Right */
+        }
+        else
+        {
+            right = middle - 1; /* Left */
+        }
+    }
+    /* Returns the index of the interval where it should belong */
+    return left;
+}
 
 // Swap function
 void Swap(int *a, int *b)
@@ -177,7 +203,7 @@ void Introsort(int arr[], int *begin, int *end)
 
 int *SampleSort(int n, int *elmnts, int *nsorted, MPI_Comm comm)
 {
-    int i, j, nlocal, npes, myrank;
+    int i, nlocal, npes, myrank;
     int *sorted_elmnts, *splitters, *allpicks;
     int *scounts, *sdispls, *rcounts, *rdispls;
 
@@ -211,16 +237,28 @@ int *SampleSort(int n, int *elmnts, int *nsorted, MPI_Comm comm)
 
     /* Compute the number of elements that belong to each bucket */
     scounts = (int *)malloc(npes * sizeof(int));
+
+    /* Modified here for binary search */
     for (i = 0; i < npes; i++)
         scounts[i] = 0;
 
-    for (j = i = 0; i < nlocal; i++)
+    for (i = 0; i < nlocal; i++)
     {
-        if (elmnts[i] < splitters[j])
-            scounts[j]++;
-        else
-            scounts[++j]++;
+        int element = elmnts[i];
+        int interval = BinarySearch(splitters, npes - 1, element);
+
+        scounts[interval]++;
     }
+
+    /*
+        for (j = i = 0; i < nlocal; i++)
+        {
+            if (elmnts[i] < splitters[j])
+                scounts[j]++;
+            else
+                scounts[++j]++;
+        }
+    */
 
     /* Determine the starting location of each bucket's elements in the elmnts array */
     sdispls = (int *)malloc(npes * sizeof(int));
@@ -319,7 +357,7 @@ int main(int argc, char *argv[])
 
     if (myrank == 0)
     {
-        printf("SAMPLESORT WITH INTROSORT\n");
+        printf("SAMPLESORT WITH INTROSORT BINARY SEARCH\n");
         printf("Sorting time: %e sec\n", etime - stime);
     }
 

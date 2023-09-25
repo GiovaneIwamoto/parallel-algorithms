@@ -8,7 +8,7 @@ Na implementação do **SAMPLESORT** o grupo deve produzir duas alterações na 
 
 Além disso, o grupo deve implementar uma das duas soluções: o **BITONICSORT** ou o **QUICKSORT PARALELO** visto em sala.
 
-É necessário fazer testes experimentais em vários processasores e analisar o desempenho dos algoritmos em relação a solução sequencial (Introsort ou qsort()). Teste seus algoritmos para entradas aleatórias de tamanho 10⁷, 10⁸ e 10⁹. Um relatório em PDF contento a descrição dos algoritmos implementados, as tabelas dos experimentos bem como uma análise dos resultados devem ser entregues juntamente com os códigos fontes.
+É necessário fazer testes experimentais em vários processadores e analisar o desempenho dos algoritmos em relação a solução sequencial (Introsort ou qsort()). Teste seus algoritmos para entradas aleatórias de tamanho 10⁷, 10⁸ e 10⁹. Um relatório em PDF contento a descrição dos algoritmos implementados, as tabelas dos experimentos bem como uma análise dos resultados devem ser entregues juntamente com os códigos fontes.
 
 Entrega 23/09.
 
