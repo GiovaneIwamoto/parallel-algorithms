@@ -65,7 +65,7 @@ void Quicksort(int *vet, int start, int end)
     {
         int pivot = Partition(vet, start, end);
         Quicksort(vet, start, pivot);
-        Quicksort(vet, start + 1, end);
+        Quicksort(vet, pivot + 1, end); // Correção: mudança de start para pivot + 1
     }
 }
 
@@ -87,7 +87,6 @@ void Quicksort_MPI(int *vet, int start, int end, int rank, int np, int rank_inde
             Quicksort_MPI(vet, start, pivot, rank, np, rank_index + 1);
             MPI_Recv(&vet[pivot + 1], end - pivot - 1, MPI_INT, dest, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
-
         else
         {
             MPI_Send(&vet[start], pivot - start, MPI_INT, dest, 1, MPI_COMM_WORLD);
@@ -145,8 +144,8 @@ int main(int argc, char **argv)
         printf("Sorting time: %e sec\n", finish_time - start_time);
 
         int i, end = -1;
-        for (i = 0; i < np; i++)
-            MPI_Send(&end, 1, MPI_INT, i, 2, MPI_COMM_WORLD);
+        for (i = 1; i < np; i++)  // Alterado de 0 para 1
+            MPI_Send(&end, 1, MPI_INT, i, 2, MPI_COMM_WORLD);  // Enviar para os outros processos
 
         free(vet);
     }
