@@ -36,12 +36,13 @@ This parallel quicksort algorithm sorts a set of numbers using the quicksort alg
 
 The source code includes a makefile with the necessary flags "-g -Wall" for compiling the sorting files.
 
-SORTING ANALYSIS
+### **SORTING ANALYSIS**
+
 Tests were conducted for random inputs of sizes 10^6, 10^7, and 10^8. For each input size, different numbers of processors were tested. Three observations were recorded for the same test case since the inputs are random, and a single result may not always accurately represent the time for a specific condition.
 
 It is observed that parallel odd-even sort, when compared to the other implemented parallel sorting methods, exhibits a significant advantage, especially as the input size increases up to 10^8. For all algorithms, execution time increases as the input size grows, indicating a consistent and expected behavior.
 
-When comparing the different versions of samplesort, it is noted that with the internal quicksort, performance improves as the input size increases compared to introsort. When introsort is implemented with binary search, there is virtually no difference observed in relation to its version without this modification for the tested inputs; significant improvements may be more noticeable with larger inputs.
+When comparing the different versions of samplesort, it is noted that with the internal quicksort, performance improves as the input size increases compared to introsort. When introsort is implemented with binary search, there is virtually no difference observed in relation to its version without this modification for the tested inputs. Significant improvements may be more noticeable with larger inputs.
 
 In many test cases, as the number of processors increases for the same input size, instead of observing a reduction in sorting time, a small improvement or even an increase in execution time is common. Some factors contributing to this phenomenon may be communication overhead or concurrency conditions, where the benefits of parallelism are outweighed by the overhead.
 
