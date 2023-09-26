@@ -14,15 +14,17 @@ The parallel odd-even sort algorithm sorts a randomly generated sequence of size
 
 ### **SAMPLESORT**
 
-`(1) "samplesort-introsort" Usage: mpiexec -n <p> samplesort-introsort <n>`
+`"samplesort-quicksort" Usage: mpiexec -n <p> samplesort-quicksort <n>`
 
-`(2) "samplesort-introsort-binary" Usage: mpiexec -n <p> samplesort-introsort-binary <n>`
+`"samplesort-introsort" Usage: mpiexec -n <p> samplesort-introsort <n>`
+
+`"samplesort-introsort-binary" Usage: mpiexec -n <p> samplesort-introsort-binary <n>`
 
 The original version of samplesort, which uses quicksort as the internal sorting method, has been modified to support two significant variations:
 
-(1) Samplesort with introsort instead of quicksort.
+_(1) Samplesort with introsort instead of quicksort._
 
-(2) Samplesort with introsort as in (1), but with binary search to locate elements between global separators.
+_(2) Samplesort with introsort as in (1), but with binary search to locate elements between global separators._
 
 The code includes functions like Swap, BinarySearch, Partition, InsertionSort, HeapSort, among others, necessary to perform samplesort properly according to the modifications. Both versions of the code display the time taken for sorting on the console. The code uses the MPI library for communication between parallel processes, with each process representing a task that operates on a portion of the list. It begins with the sampling phase, where processes select samples from the local list. The samples are chosen equidistantly to represent the distribution of elements, facilitating the determination of splitters responsible for dividing the intervals. In (2), based on the splitters, the local list is partitioned into intervals belonging to different processes using binary search to determine each element's position in the sorted list. After these determinations, processes exchange elements according to the intervals and perform local sorting of the received elements using introsort.
 
@@ -34,7 +36,7 @@ This parallel quicksort algorithm sorts a set of numbers using the quicksort alg
 
 ### **MAKEFILE**
 
-The source code includes a makefile with the necessary flags "-g -Wall" for compiling the sorting files.
+The source code includes a makefile with the necessary flags `-g -Wall` for compiling the sorting files.
 
 ### **SORTING ANALYSIS**
 
