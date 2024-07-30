@@ -32,7 +32,7 @@ In many test cases, as the number of processors increases for the same input siz
 $ mpiexec -n <p> odd-even <n>
 ```
 
-The parallel odd-even sort algorithm sorts a randomly generated sequence of size n, as specified in the command line arguments. It alternates between even and odd phases during the sorting process, with processes exchanging elements with their even or odd neighbors depending on the current phase. During these element exchanges, processes merge their local elements with those received from their neighbors to ensure gradual sorting. The code measures the time required to sort the list using the MPI_Wtime() function and prints this timing. It includes other necessary functions for the proper functioning of the odd-even sort, such as comparison and merge functions specific to each phase.
+The parallel odd-even sort algorithm sorts a randomly generated sequence of size n, as specified in the command line arguments. It alternates between even and odd phases during the sorting process, with processes exchanging elements with their even or odd neighbors depending on the current phase. During these element exchanges, processes merge their local elements with those received from their neighbors to ensure gradual sorting. The code measures the time required to sort the list using the `MPI_Wtime()` function and prints this timing. It includes other necessary functions for the proper functioning of the odd-even sort, such as comparison and merge functions specific to each phase.
 
 ---
 
